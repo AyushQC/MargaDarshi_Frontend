@@ -1,0 +1,19 @@
+.roadmap-container {
+  max-width: 1200px;
+}
+
+.mermaid-chart-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px; /* Ensure it has some height while loading */
+}
+
+/* You might need to adjust Mermaid's SVG styling directly if needed */
+.mermaid-chart-container svg {
+  max-width: 100%;
+  height: auto;
+}

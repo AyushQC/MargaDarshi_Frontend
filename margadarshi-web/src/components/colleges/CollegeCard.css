@@ -1,0 +1,13 @@
+.college-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.college-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.facilities-pills .badge {
+  font-size: 0.8rem;
+  padding: 0.4em 0.8em;
+}
