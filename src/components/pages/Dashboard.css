@@ -1,0 +1,64 @@
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #e2e8f0; }
+.dark ::-webkit-scrollbar-track { background: #1e293b; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
+::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+/* Styling for active tab */
+.tab-active {
+    border-color: #4f46e5 !important; /* Indigo for 10th */
+    color: #4f46e5;
+    background-color: #eef2ff;
+}
+.dark .tab-active {
+    background-color: #312e81;
+    color: #c7d2fe;
+}
+
+.tab-active-12th {
+     border-color: #16a34a !important; /* Green for 12th */
+     color: #16a34a;
+     background-color: #f0fdf4;
+}
+.dark .tab-active-12th {
+    background-color: #166534;
+    color: #dcfce7;
+}
+
+/* Page-like transition */
+.page {
+    display: none;
+    animation: fadeIn 0.5s ease-in-out;
+}
+.page-visible {
+    display: block;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal styles */
+.modal-overlay {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Simple spinner */
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #4f46e5;
+    animation: spin 1s ease infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.ai-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
