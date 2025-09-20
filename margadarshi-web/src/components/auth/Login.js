@@ -136,7 +136,7 @@ const Login = () => {
               )}
               
               <div className="text-center mt-3">
-                <p>Don't have an account? <a href="/register">Register here</a></p>
+                <p>Don't have an account? <Link to="/register">Register here</Link></p>
               </div>
             </Card.Body>
           </Card>
