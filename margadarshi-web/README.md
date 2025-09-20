@@ -1,70 +1,91 @@
-# Getting Started with Create React App
+# Margadarshi - Your Career Guidance Partner
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Margadarshi is a modern, user-friendly web application designed to guide students in Karnataka through their educational and career journeys. It provides personalized recommendations, detailed career roadmaps, and a comprehensive college search tool to help students make informed decisions about their future.
 
-## Available Scripts
+## ✨ Key Features
 
-In the project directory, you can run:
+- **User Authentication:** Secure registration and login system with OTP verification.
+- **Personalized Dashboard:** A dynamic dashboard that adapts to the user's qualification (After 10th or After 12th), providing relevant guidance and resources.
+- **Career Quiz:** An interactive quiz that analyzes a user's interests and suggests suitable career paths.
+- **Dynamic Career Roadmaps:** Detailed, visually-rich roadmaps for recommended careers, including required degrees, key skills, and a step-by-step visual guide using Mermaid.js.
+- **Comprehensive College Search:** Users can search for colleges in Karnataka by district and program, with results displayed clearly.
+- **User Profile Management:** Users can view and manage their profile information.
+- **Responsive Design:** Built with Tailwind CSS and React-Bootstrap for a seamless experience on all devices.
 
-### `npm start`
+## 🚀 Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Frontend:** React.js
+- **UI Frameworks:** React-Bootstrap & Tailwind CSS
+- **Routing:** React Router
+- **State Management:** React Hooks (useState, useEffect) & LocalStorage
+- **Form Handling:** Formik & Yup for validation
+- **API Communication:** Axios
+- **Diagramming:** Mermaid.js for rendering career roadmaps
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🏁 Getting Started
 
-### `npm test`
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerequisites
 
-### `npm run build`
+You need to have Node.js and npm (Node Package Manager) installed on your machine. You can download them from [nodejs.org](https://nodejs.org/).
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Installation & Setup
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1.  **Clone the repository:**
+    ```sh
+    git clone https://github.com/AyushQC/MargaDarshi_Frontend.git
+    ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2.  **Navigate to the project directory:**
+    ```sh
+    cd MargaDarshi_Frontend/margadarshi-web
+    ```
 
-### `npm run eject`
+3.  **Install NPM packages:**
+    This will install all the necessary dependencies for the project.
+    ```sh
+    npm install
+    ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Running the Application
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Once the dependencies are installed, you can run the application in development mode.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```sh
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+This will open the application in your default browser at `http://localhost:3000`. The page will automatically reload if you make any changes to the code.
 
-## Learn More
+### Building for Production
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+To create an optimized build of the application for deployment, run:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```sh
+npm run build
+```
 
-### Code Splitting
+This command creates a `build` folder in the project directory, which contains the static files ready to be hosted on a web server.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 📂 Folder Structure
 
-### Analyzing the Bundle Size
+Here is an overview of the main files and folders in the project:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+margadarshi-web/
+├── public/             # Public assets and index.html
+├── src/
+│   ├── components/
+│   │   ├── auth/       # Login, Register components
+│   │   ├── common/     # Reusable components like Navbar
+│   │   ├── colleges/   # College search and card components
+│   │   └── pages/      # Main page components (Home, Dashboard, etc.)
+│   ├── services/
+│   │   └── api.js      # Centralized Axios instance for API calls
+│   ├── App.js          # Main application component with routing
+│   ├── index.js        # Entry point of the React application
+│   └── index.css       # Global styles and Tailwind CSS imports
+├── package.json        # Project dependencies and scripts
+└── tailwind.config.js  # Tailwind CSS configuration
+```
