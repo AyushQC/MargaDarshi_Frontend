@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Alert, Spinner, Pagination } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getColleges } from '../../services/api';
 import CollegeSearch from '../colleges/CollegeSearch';
 import CollegeCard from '../colleges/CollegeCard';
 
 const Home = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [colleges, setColleges] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,7 @@ const Home = () => {
         const parsedUser = JSON.parse(loggedInUser);
         setUser(parsedUser);
         // Automatically fetch colleges for the user's district on load
-        handleSearch({ district: parsedUser.district || '', program: '' });
+        handleSearch({ district: parsedUser.district || '', program: '' }, true);
       } catch (e) {
         console.error("Error parsing user from localStorage", e);
         // Don't fetch colleges if user data is corrupt
@@ -29,7 +30,16 @@ const Home = () => {
     // If no user is logged in, do nothing. The page will just render the default state.
   }, []);
 
-  const handleSearch = async (searchParams) => {
+  const handleSearch = async (searchParams, isInitialLoad = false) => {
+    if (!user) {
+      // On initial load for a logged-in user, we don't want to redirect.
+      // But if a non-logged-in user tries to search, redirect them.
+      if (!isInitialLoad) {
+        navigate('/login');
+      }
+      return;
+    }
+
     setLoading(true);
     setError('');
     setColleges([]);
@@ -46,6 +56,14 @@ const Home = () => {
       setError(err.response?.data?.message || err.message || 'Could not fetch colleges.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleQuizClick = () => {
+    if (user) {
+      navigate('/career-quiz');
+    } else {
+      navigate('/login');
     }
   };
 
@@ -111,9 +129,7 @@ const Home = () => {
             <p className="lead text-muted">
               Take our quick career quiz to get personalized recommendations and discover the perfect career roadmap for you.
             </p>
-            <Link to="/career-quiz">
-              <Button variant="success" size="lg">Start the Career Quiz</Button>
-            </Link>
+            <Button variant="success" size="lg" onClick={handleQuizClick}>Start the Career Quiz</Button>
           </Col>
         </Row>
       </Container>
@@ -153,9 +169,9 @@ const Home = () => {
           </>
         )}
 
-        {!loading && !error && colleges.length === 0 && (
+        {!loading && !error && colleges.length === 0 && user && (
           <div className="text-center text-muted mt-5">
-            <p>No colleges found. Try adjusting your search or clearing the filters to see all colleges.</p>
+            <p>No colleges found for your district. Try adjusting your search or clearing the filters to see all colleges.</p>
           </div>
         )}
       </Container>
