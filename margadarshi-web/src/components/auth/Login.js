@@ -3,7 +3,7 @@ import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap'
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { verifyOtp, loginUser } from '../../services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
   const [step, setStep] = useState(1);
