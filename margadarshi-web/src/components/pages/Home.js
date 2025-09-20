@@ -23,13 +23,10 @@ const Home = () => {
         handleSearch({ district: parsedUser.district || '', program: '' });
       } catch (e) {
         console.error("Error parsing user from localStorage", e);
-        // If user data is corrupt, fetch all colleges
-        handleSearch({});
+        // Don't fetch colleges if user data is corrupt
       }
-    } else {
-        // If no user is logged in, fetch all colleges by default
-        handleSearch({});
     }
+    // If no user is logged in, do nothing. The page will just render the default state.
   }, []);
 
   const handleSearch = async (searchParams) => {
