@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-// Using the render.com backend servers
+// Using the render.com backend server for all APIs
 const API_URL = 'https://margadarshi-ggkj.onrender.com';
-const COLLEGE_API_URL = 'https://collegeapi-mnni.onrender.com';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -11,55 +10,37 @@ const api = axios.create({
   },
 });
 
-// Create separate axios instance for college API
-const collegeApi = axios.create({
-  baseURL: COLLEGE_API_URL,
-  headers: {
-    'Content-Type': 'application/json',
+// Add request interceptor for auth tokens
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
   },
-});
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-// Add request interceptor to both instances for auth tokens
-const addAuthInterceptor = (instance) => {
-  instance.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
+// Add response interceptor for auth error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      console.error("Authentication error. Token is invalid or expired. Logging out.");
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('quizResults');
+      // Force a redirect to the login page to re-authenticate
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
       }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
     }
-  );
-};
-
-// Add response interceptor to both instances for auth error handling
-const addResponseInterceptor = (instance) => {
-  instance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-        console.error("Authentication error. Token is invalid or expired. Logging out.");
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.removeItem('quizResults');
-        // Force a redirect to the login page to re-authenticate
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
-        }
-      }
-      return Promise.reject(error);
-    }
-  );
-};
-
-// Apply interceptors to both instances
-addAuthInterceptor(api);
-addAuthInterceptor(collegeApi);
-addResponseInterceptor(api);
-addResponseInterceptor(collegeApi);
+    return Promise.reject(error);
+  }
+);
 
 export const registerUser = async (userData) => {
   try {
@@ -144,11 +125,11 @@ export const getProfilePhoto = async () => {
 };
 
 export const getColleges = (params) => {
-  return collegeApi.get('/api/colleges', { params: params });
+  return api.get('/api/colleges', { params: params });
 };
 
 export const getCollegeSuggestions = (params) => {
-  return collegeApi.get('/api/colleges/suggest', { params: params });
+  return api.get('/api/colleges/suggest', { params: params });
 };
 
 export const getQuiz = () => {
