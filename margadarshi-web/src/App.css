@@ -1,3 +1,31 @@
+/* Animated Get Started button */
+.get-started-btn {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.get-started-btn:hover {
+  animation: pulse 0.5s;
+  box-shadow: 0 0 0 4px #e0e7ff;
+  background: #e0e7ff;
+  color: #1e40af;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+/* Notebook paper grid background for white section */
+.main-content {
+  background-color: #fff;
+  background-image:
+    linear-gradient(to right, rgba(180,180,180,0.10) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(180,180,180,0.10) 1px, transparent 1px);
+  background-size: 32px 32px;
+  min-height: 100vh;
+}
 /* Custom styles for Margadarshi website */
 
 /* General styles */
@@ -36,6 +64,98 @@ body {
 }
 
 /* Form styling */
+
+/* 1. Education image box with text */
+.education-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 2rem 1.5rem;
+  margin: 2rem auto;
+  max-width: 400px;
+  position: relative;
+}
+.education-box img {
+  width: 120px;
+  margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+.education-box .edu-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2563eb;
+  letter-spacing: 2px;
+  text-shadow: 1px 2px 8px #b3c6ff;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* 2. Animations for buttons, cards, links */
+button, .card, a {
+  transition: transform 0.2s cubic-bezier(.4,2,.6,1), box-shadow 0.2s, background 0.2s, color 0.2s;
+}
+button:hover, .card:hover, a:hover {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 8px 32px rgba(37,99,235,0.12);
+  background: #e0e7ff;
+  color: #1e40af;
+}
+
+/* 3. Book pattern background for white section */
+.main-content {
+  background-color: #fff;
+  background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="white"/><g opacity="0.12"><rect x="10" y="20" width="40" height="20" rx="4" fill="%232563eb"/><rect x="15" y="25" width="30" height="10" rx="2" fill="%23fff"/><rect x="20" y="30" width="20" height="2" rx="1" fill="%232563eb"/></g></svg>');
+  background-repeat: repeat;
+  background-size: 80px 80px;
+  min-height: 100vh;
+}
+
+/* 4. Improved navbar contrast */
+.navbar {
+  background: linear-gradient(90deg, #2563eb 80%, #fff 100%);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(37,99,235,0.08);
+  border-bottom: 2px solid #1e40af;
+}
+.navbar a {
+  color: #fff;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s, color 0.2s;
+}
+.navbar a:hover {
+  background: #fff;
+  color: #2563eb;
+}
+
+/* Utility for cards */
+.card {
+  background: #f8fafc;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .education-box {
+    max-width: 95vw;
+    padding: 1rem;
+  }
+  .main-content {
+    background-size: 60px 60px;
+  }
+}
 .form-control:focus, .form-select:focus {
   border-color: #0d6efd;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
