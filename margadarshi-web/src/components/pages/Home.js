@@ -59,10 +59,13 @@ const Home = () => {
         Object.entries(searchParams).filter(([_, v]) => v != null && v !== '')
       );
       
+      console.log('Searching colleges with params:', filteredParams);
       const response = await getColleges(filteredParams);
       setColleges(response.data); // Correctly set the data from the response
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Could not fetch colleges.');
+      console.error('College search error:', err);
+      const errorMessage = err.message || err.response?.data?.message || 'Could not fetch colleges. Please try again.';
+      setError(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -80,6 +83,7 @@ const Home = () => {
     setCurrentPage(1);
     setIsShowingSuggestions(true);
     try {
+      console.log('Fetching college suggestions with params:', suggestionParams);
       const response = await getCollegeSuggestions(suggestionParams);
       let suggestedColleges = response.data.colleges || [];
       
@@ -105,7 +109,9 @@ const Home = () => {
       
       setColleges(suggestedColleges);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Could not fetch college suggestions.');
+      console.error('College suggestions error:', err);
+      const errorMessage = err.message || err.response?.data?.message || 'Could not fetch college suggestions. Please try again.';
+      setError(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

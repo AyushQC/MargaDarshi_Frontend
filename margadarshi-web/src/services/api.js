@@ -124,12 +124,32 @@ export const getProfilePhoto = async () => {
   }
 };
 
-export const getColleges = (params) => {
-  return api.get('/api/colleges', { params: params });
+export const getColleges = async (params) => {
+  try {
+    console.log('Fetching colleges with params:', params);
+    const response = await api.get('/api/colleges', { params: params });
+    console.log('Colleges response:', response.data);
+    return response;
+  } catch (error) {
+    console.error('Get colleges error:', error);
+    console.error('Error response:', error.response?.data);
+    console.error('Error status:', error.response?.status);
+    throw error.response ? error.response.data : { message: 'Failed to fetch colleges.' };
+  }
 };
 
-export const getCollegeSuggestions = (params) => {
-  return api.get('/api/colleges/suggest', { params: params });
+export const getCollegeSuggestions = async (params) => {
+  try {
+    console.log('Fetching college suggestions with params:', params);
+    const response = await api.get('/api/colleges/suggest', { params: params });
+    console.log('College suggestions response:', response.data);
+    return response;
+  } catch (error) {
+    console.error('Get college suggestions error:', error);
+    console.error('Error response:', error.response?.data);
+    console.error('Error status:', error.response?.status);
+    throw error.response ? error.response.data : { message: 'Failed to fetch college suggestions.' };
+  }
 };
 
 export const getQuiz = () => {
