@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Card, Button, Form, Image, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Form, Image, Alert, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { updateProfile } from '../../services/api';
+import { updateProfile, uploadProfilePhoto, getProfilePhoto } from '../../services/api';
 import './UserProfile.css'; // We'll create this for custom styles
 
 const UserProfile = () => {
@@ -9,6 +9,9 @@ const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [previewImage, setPreviewImage] = useState(null);
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -23,6 +26,10 @@ const UserProfile = () => {
           ...parsedUser,
           dob: parsedUser.dob ? new Date(parsedUser.dob).toISOString().split('T')[0] : '',
         });
+        setProfilePhotoUrl(parsedUser.profilePhotoUrl || '');
+        
+        // Load profile photo
+        loadProfilePhoto();
       } catch (e) {
         localStorage.removeItem('user');
         navigate('/login');
@@ -32,12 +39,62 @@ const UserProfile = () => {
     }
   }, [navigate]);
 
+  const loadProfilePhoto = async () => {
+    try {
+      const photoUrl = await getProfilePhoto();
+      setPreviewImage(photoUrl);
+    } catch (err) {
+      // No photo available or error loading, use default
+      console.log('No profile photo available');
+    }
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file (JPG, PNG, etc.)');
+        return;
+      }
+      
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('File size must be less than 5MB');
+        return;
+      }
+      
+      setSelectedFile(file);
       setPreviewImage(URL.createObjectURL(file));
-      // Note: We are not setting the file in formData as the backend doesn't support file uploads yet.
-      // This is for UI demonstration purposes.
+      setError('');
+    }
+  };
+
+  const handleUploadPhoto = async () => {
+    if (!selectedFile) return;
+    
+    setUploadingPhoto(true);
+    setError('');
+    
+    try {
+      await uploadProfilePhoto(selectedFile);
+      setSuccess('Profile photo uploaded successfully!');
+      setSelectedFile(null);
+      // Reload the photo to get the updated version
+      loadProfilePhoto();
+    } catch (err) {
+      setError(err.message || 'Failed to upload photo');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleUrlChange = (e) => {
+    const url = e.target.value;
+    setProfilePhotoUrl(url);
+    setFormData(prev => ({ ...prev, profilePhotoUrl: url }));
+    if (url) {
+      setPreviewImage(url);
     }
   };
 
@@ -85,17 +142,61 @@ const UserProfile = () => {
                 <Row>
                   <Col md={4} className="text-center mb-4 mb-md-0">
                     <Image
-                      src={previewImage || user.profilePicture || 'https://placehold.co/150x150?text=No+Image'}
+                      src={previewImage || 'https://placehold.co/150x150?text=No+Image'}
                       roundedCircle
                       className="profile-picture"
+                      style={{ width: '150px', height: '150px', objectFit: 'cover' }}
                     />
                     {isEditing && (
-                      <Form.Group controlId="formFile" className="mt-3">
-                        <Form.Control type="file" onChange={handleFileChange} size="sm" />
-                        <Form.Text className="text-muted">
-                          Profile photo upload is for demonstration.
-                        </Form.Text>
-                      </Form.Group>
+                      <div className="mt-3">
+                        <Form.Group controlId="formFile">
+                          <Form.Label>Upload Profile Photo</Form.Label>
+                          <Form.Control 
+                            type="file" 
+                            onChange={handleFileChange} 
+                            accept="image/*"
+                            size="sm" 
+                          />
+                          <Form.Text className="text-muted">
+                            Max 5MB. JPG, PNG supported.
+                          </Form.Text>
+                        </Form.Group>
+                        
+                        {selectedFile && (
+                          <Button 
+                            variant="primary" 
+                            size="sm" 
+                            className="mt-2"
+                            onClick={handleUploadPhoto}
+                            disabled={uploadingPhoto}
+                          >
+                            {uploadingPhoto ? (
+                              <>
+                                <Spinner size="sm" className="me-2" />
+                                Uploading...
+                              </>
+                            ) : (
+                              'Upload Photo'
+                            )}
+                          </Button>
+                        )}
+                        
+                        <hr className="my-3" />
+                        
+                        <Form.Group controlId="profilePhotoUrl">
+                          <Form.Label>Or use Image URL</Form.Label>
+                          <Form.Control 
+                            type="url" 
+                            value={profilePhotoUrl}
+                            onChange={handleUrlChange}
+                            placeholder="Enter image URL"
+                            size="sm"
+                          />
+                          <Form.Text className="text-muted">
+                            Alternative to file upload
+                          </Form.Text>
+                        </Form.Group>
+                      </div>
                     )}
                   </Col>
                   <Col md={8}>

@@ -4,6 +4,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { verifyOtp, loginUser } from '../../services/api';
 import { useNavigate, Link } from 'react-router-dom';
+import OTPInput from '../common/OTPInput';
 
 const Login = () => {
   const [step, setStep] = useState(1);
@@ -93,46 +94,50 @@ const Login = () => {
                   )}
                 </Formik>
               ) : (
-                <Formik
-                  initialValues={{ otp: '' }}
-                  validationSchema={otpSchema}
-                  onSubmit={handleVerifyOtp}
-                >
-                  {({ handleSubmit, handleChange, values, touched, errors }) => (
-                    <Form noValidate onSubmit={handleSubmit}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Enter OTP</Form.Label>
-                        <Form.Control
-                          type="text"
-                          name="otp"
-                          value={values.otp}
-                          onChange={handleChange}
-                          isInvalid={touched.otp && !!errors.otp}
-                          placeholder="Enter 6-digit OTP"
-                        />
-                        <Form.Control.Feedback type="invalid">
-                          {errors.otp}
-                        </Form.Control.Feedback>
-                      </Form.Group>
-                      
-                      <Button variant="primary" type="submit" className="w-100 mt-3">
-                        Verify OTP
-                      </Button>
-                      
-                      <div className="text-center mt-3">
+                <div>
+                  <div className="text-center mb-4">
+                    <h4>Enter OTP</h4>
+                    <p className="text-muted">
+                      We've sent a 6-digit verification code to<br />
+                      <strong>{email}</strong>
+                    </p>
+                  </div>
+                  
+                  <Formik
+                    initialValues={{ otp: '' }}
+                    validationSchema={otpSchema}
+                    onSubmit={handleVerifyOtp}
+                  >
+                    {({ handleSubmit, setFieldValue, values, touched, errors }) => (
+                      <Form noValidate onSubmit={handleSubmit}>
+                        <Form.Group className="mb-4">
+                          <Form.Label className="text-center w-100 mb-3">
+                            Enter 6-digit OTP
+                          </Form.Label>
+                          <OTPInput
+                            value={values.otp}
+                            onChange={(value) => setFieldValue('otp', value)}
+                            length={6}
+                          />
+                          {touched.otp && errors.otp && (
+                            <div className="text-danger text-center small">
+                              {errors.otp}
+                            </div>
+                          )}
+                        </Form.Group>
+                        
                         <Button 
-                          variant="link" 
-                          onClick={() => {
-                            setStep(1);
-                            setSuccess('');
-                          }}
+                          variant="primary" 
+                          type="submit" 
+                          className="w-100 mt-3"
+                          disabled={values.otp.length !== 6}
                         >
-                          Change Email
+                          Verify OTP
                         </Button>
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
+                      </Form>
+                    )}
+                  </Formik>
+                </div>
               )}
               
               <div className="text-center mt-3">

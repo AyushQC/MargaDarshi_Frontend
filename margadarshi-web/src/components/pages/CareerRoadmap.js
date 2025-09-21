@@ -86,7 +86,14 @@ const CareerRoadmapPage = () => {
             <Card.Body>
               <Card.Title as="h4" className="text-center">Visual Career Roadmap</Card.Title>
               <div className="mermaid-chart-container">
-                <Mermaid chart={details.mermaid_code} />
+                {details.mermaid_code ? (
+                  <Mermaid chart={details.mermaid_code} />
+                ) : (
+                  <div className="alert alert-info text-center">
+                    <i className="bi bi-info-circle me-2"></i>
+                    Visual roadmap not available for this career
+                  </div>
+                )}
               </div>
             </Card.Body>
           </Card>

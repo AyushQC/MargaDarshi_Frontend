@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Alert, Spinner, Pagination } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { getColleges } from '../../services/api';
+import { getColleges, getCollegeSuggestions } from '../../services/api';
 import CollegeSearch from '../colleges/CollegeSearch';
 import CollegeCard from '../colleges/CollegeCard';
+import CollegeModal from '../colleges/CollegeModal';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -13,6 +14,9 @@ const Home = () => {
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [collegesPerPage] = useState(6); // Display 6 colleges per page
+  const [selectedCollege, setSelectedCollege] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [isShowingSuggestions, setIsShowingSuggestions] = useState(false);
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
@@ -20,15 +24,19 @@ const Home = () => {
       try {
         const parsedUser = JSON.parse(loggedInUser);
         setUser(parsedUser);
-        // Automatically fetch colleges for the user's district on load
-        handleSearch({ district: parsedUser.district || '', program: '' }, true);
       } catch (e) {
         console.error("Error parsing user from localStorage", e);
-        // Don't fetch colleges if user data is corrupt
       }
     }
-    // If no user is logged in, do nothing. The page will just render the default state.
   }, []);
+
+  // Separate useEffect to handle initial college loading after user is set
+  useEffect(() => {
+    if (user) {
+      // Automatically fetch colleges for the user's district on load
+      handleSearch({ district: user.district || '', program: '' }, true);
+    }
+  }, [user]); // This will run when user state changes
 
   const handleSearch = async (searchParams, isInitialLoad = false) => {
     if (!user) {
@@ -44,6 +52,7 @@ const Home = () => {
     setError('');
     setColleges([]);
     setCurrentPage(1); // Reset to the first page on every new search
+    setIsShowingSuggestions(false);
     try {
       // Filter out empty params so we don't send `program=` if it's empty
       const filteredParams = Object.fromEntries(
@@ -57,6 +66,59 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSuggestions = async (suggestionParams) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setColleges([]);
+    setCurrentPage(1);
+    setIsShowingSuggestions(true);
+    try {
+      const response = await getCollegeSuggestions(suggestionParams);
+      let suggestedColleges = response.data.colleges || [];
+      
+      // For 10th grade students, prioritize PUC programs over engineering/degree programs
+      if (user.qualification === '10') {
+        suggestedColleges = suggestedColleges.sort((a, b) => {
+          const aPucCount = a.suggestedPrograms?.filter(p => 
+            p.name.toLowerCase().includes('puc') || 
+            p.name.toLowerCase().includes('pre-university') ||
+            p.eligibility === '10th'
+          ).length || 0;
+          
+          const bPucCount = b.suggestedPrograms?.filter(p => 
+            p.name.toLowerCase().includes('puc') || 
+            p.name.toLowerCase().includes('pre-university') ||
+            p.eligibility === '10th'
+          ).length || 0;
+          
+          // Colleges with more PUC programs should come first
+          return bPucCount - aPucCount;
+        });
+      }
+      
+      setColleges(suggestedColleges);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Could not fetch college suggestions.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCollegeClick = (college) => {
+    setSelectedCollege(college);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedCollege(null);
   };
 
   const handleQuizClick = () => {
@@ -136,8 +198,15 @@ const Home = () => {
 
       {/* College Search Section */}
       <Container className="py-5">
-        <h2 className="text-center mb-4">Find Your College</h2>
-        <CollegeSearch onSearch={handleSearch} initialDistrict={user?.district} />
+        <h2 className="text-center mb-4">
+          {isShowingSuggestions ? '💡 Personalized College Suggestions' : 'Find Your College'}
+        </h2>
+        <CollegeSearch 
+          onSearch={handleSearch} 
+          onSuggest={handleSuggestions}
+          initialDistrict={user?.district}
+          user={user}
+        />
 
         {loading && (
           <div className="text-center">
@@ -152,8 +221,8 @@ const Home = () => {
           <>
             <Row xs={1} md={2} lg={3} className="g-4">
               {currentColleges.map((college) => (
-                <Col key={college._id}>
-                  <CollegeCard college={college} />
+                <Col key={college._id || college.id}>
+                  <CollegeCard college={college} onCollegeClick={handleCollegeClick} user={user} />
                 </Col>
               ))}
             </Row>
@@ -171,10 +240,21 @@ const Home = () => {
 
         {!loading && !error && colleges.length === 0 && user && (
           <div className="text-center text-muted mt-5">
-            <p>No colleges found for your district. Try adjusting your search or clearing the filters to see all colleges.</p>
+            <p>
+              {isShowingSuggestions 
+                ? 'No personalized suggestions found. Try adjusting your preferences or search manually.' 
+                : 'No colleges found for your search criteria. Try adjusting your filters or clearing them to see all colleges.'}
+            </p>
           </div>
         )}
       </Container>
+
+      {/* College Detail Modal */}
+      <CollegeModal 
+        show={showModal}
+        college={selectedCollege}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };

@@ -1,12 +1,28 @@
-import React from 'react';
-import { Navbar, Nav, Container, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Navbar, Nav, Container, Button, Image } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-
-import { logoutUser } from '../../services/api';
+import { logoutUser, getProfilePhoto } from '../../services/api';
 
 const NavigationBar = () => {
   const navigate = useNavigate();
   const user = localStorage.getItem('user');
+  const [profilePhoto, setProfilePhoto] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      loadProfilePhoto();
+    }
+  }, [user]);
+
+  const loadProfilePhoto = async () => {
+    try {
+      const photoUrl = await getProfilePhoto();
+      setProfilePhoto(photoUrl);
+    } catch (err) {
+      // No photo available, use default
+      setProfilePhoto(null);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -15,6 +31,11 @@ const NavigationBar = () => {
       console.error("Logout failed", error);
       // Still clear local storage even if API fails, to avoid being stuck
     } finally {
+      // Cleanup profile photo URL if it exists
+      if (profilePhoto) {
+        URL.revokeObjectURL(profilePhoto);
+      }
+      setProfilePhoto(null);
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       navigate('/login');
@@ -31,7 +52,23 @@ const NavigationBar = () => {
             <Nav.Link as={Link} to="/">Home</Nav.Link>
             {user ? (
               <>
-                <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
+                <Nav.Link as={Link} to="/profile">
+                  {profilePhoto ? (
+                    <div className="d-flex align-items-center">
+                      <Image 
+                        src={profilePhoto} 
+                        roundedCircle 
+                        width="30" 
+                        height="30" 
+                        className="me-2"
+                        style={{ objectFit: 'cover' }}
+                      />
+                      Profile
+                    </div>
+                  ) : (
+                    'Profile'
+                  )}
+                </Nav.Link>
                 <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
                 <Button variant="outline-light" onClick={handleLogout}>Logout</Button>
               </>
