@@ -101,7 +101,7 @@ const Home = () => {
                   <p className="lead">Your guide to educational and career opportunities in Karnataka</p>
                   <div className="mt-4">
                     <Link to="/register">
-                      <Button variant="light" size="lg" className="me-3">Get Started</Button>
+                      <Button variant="light" size="lg" className="me-3 get-started-btn">Get Started</Button>
                     </Link>
                     <Link to="/login">
                       <Button variant="outline-light" size="lg">Login</Button>
@@ -112,17 +112,17 @@ const Home = () => {
             </Col>
             <Col md={6} className="text-center">
               <img 
-                src="https://placehold.co/500x300?text=Margadarshi" 
-                alt="Margadarshi" 
-                className="img-fluid rounded shadow"
+                src="/learning.png" 
+                alt="Distance learning illustration" 
+                className="rounded-lg shadow-lg w-full h-auto" 
               />
             </Col>
           </Row>
         </Container>
       </div>
 
-      {/* Career Quiz Section */}
-      <Container className="py-5 text-center bg-light">
+  {/* Career Quiz Section */}
+  <Container className="py-5 text-center bg-light">
         <Row>
           <Col>
             <h2 className="fw-bold">Unsure About Your Path?</h2>
@@ -132,7 +132,7 @@ const Home = () => {
             <Button variant="success" size="lg" onClick={handleQuizClick}>Start the Career Quiz</Button>
           </Col>
         </Row>
-      </Container>
+  </Container>
 
       {/* College Search Section */}
       <Container className="py-5">
