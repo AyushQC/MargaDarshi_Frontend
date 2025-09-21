@@ -64,8 +64,18 @@ const Home = () => {
       setColleges(response.data); // Correctly set the data from the response
     } catch (err) {
       console.error('College search error:', err);
-      const errorMessage = err.message || err.response?.data?.message || 'Could not fetch colleges. Please try again.';
-      setError(`Error: ${errorMessage}`);
+      let errorMessage = 'Could not fetch colleges. Please try again.';
+      
+      // Handle specific backend errors
+      if (err.message === 'Failed to fetch data from College API') {
+        errorMessage = 'College service is temporarily unavailable. Please try again later.';
+      } else if (err.response?.status === 500) {
+        errorMessage = 'Server error. Our team has been notified. Please try again later.';
+      } else {
+        errorMessage = err.message || err.response?.data?.message || errorMessage;
+      }
+      
+      setError(`⚠️ ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -110,8 +120,18 @@ const Home = () => {
       setColleges(suggestedColleges);
     } catch (err) {
       console.error('College suggestions error:', err);
-      const errorMessage = err.message || err.response?.data?.message || 'Could not fetch college suggestions. Please try again.';
-      setError(`Error: ${errorMessage}`);
+      let errorMessage = 'Could not fetch college suggestions. Please try again.';
+      
+      // Handle specific backend errors
+      if (err.message === 'Failed to fetch data from College API') {
+        errorMessage = 'College service is temporarily unavailable. Please try again later.';
+      } else if (err.response?.status === 500) {
+        errorMessage = 'Server error. Our team has been notified. Please try again later.';
+      } else {
+        errorMessage = err.message || err.response?.data?.message || errorMessage;
+      }
+      
+      setError(`⚠️ ${errorMessage}`);
     } finally {
       setLoading(false);
     }
